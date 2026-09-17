@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyAssist - Airline Support Agent</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">✈️</span>
+                    <span class="logo-text">SkyAssist</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="chat">
+                    <span class="icon">💬</span>
+                    <span>Support Chat</span>
+                </button>
+                <button class="nav-item" data-view="bookings">
+                    <span class="icon">🎫</span>
+                    <span>My Bookings</span>
+                </button>
+                <button class="nav-item" data-view="history">
+                    <span class="icon">📋</span>
+                    <span>Ticket History</span>
+                </button>
+                <button class="nav-item" data-view="faq">
+                    <span class="icon">❓</span>
+                    <span>FAQ</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-secondary" id="clearChat">Clear Chat</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat View -->
+            <div class="view active" id="chat-view">
+                <div class="chat-header">
+                    <div class="header-content">
+                        <h1>Flight Support Assistant</h1>
+                        <p>Get instant help with flight disruptions</p>
+                    </div>
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        <span>Online & Ready</span>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="messages" id="messagesContainer">
+                        <div class="message agent welcome-message">
+                            <div class="avatar agent-avatar">🤖</div>
+                            <div class="message-content">
+                                <div class="message-text">
+                                    <h3>Welcome to SkyAssist! 👋</h3>
+                                    <p>I'm your AI-powered flight support agent. I can help you with:</p>
+                                    <ul>
+                                        <li>✈️ Flight cancellations & rebooking</li>
+                                        <li>⏱️ Delay compensation & vouchers</li>
+                                        <li>🏨 Hotel accommodation for long delays</li>
+                                        <li>💰 Refunds & fare differences</li>
+                                        <li>📞 Escalation to human agents when needed</li>
+                                    </ul>
+                                    <p style="margin-top: 1rem;"><strong>Pro tip:</strong> Have your booking reference ready (e.g., SK4821X)</p>
+                                </div>
+                                <span class="message-time">just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <!-- Scenario Buttons -->
+                        <div class="scenario-label">🎯 Demo Scenarios — click to load</div>
+                        <div class="scenario-actions">
+                            <button class="scenario-btn s1" data-prompt="My flight SK-204 from Delhi to Goa got cancelled, my booking reference is SK4821X. I am furious and want a full cash refund plus a free business class upgrade on my return flight for the trouble.">
+                                <div class="s-tag">Scenario 1</div>
+                                <div class="s-name">Priya Nair · Gold</div>
+                                <div class="s-desc">Flight Cancelled · Wants refund + upgrade</div>
+                            </button>
+                            <button class="scenario-btn s2" data-prompt="My booking reference is TR1190B. My flight SK-118 from Mumbai to Bengaluru is delayed 4 hours. I am missing a connecting meeting and I need hotel accommodation since it has been such a long delay.">
+                                <div class="s-tag">Scenario 2</div>
+                                <div class="s-name">Arvind Kulkarni · Silver</div>
+                                <div class="s-desc">4h Delay · Wants hotel accommodation</div>
+                            </button>
+                            <button class="scenario-btn s3" data-prompt="My booking is WL7742. Flight SK-305 from Delhi to Hyderabad is delayed 6 hours. I want a full night hotel stay not just the delayed hours. I also want to move to a different higher fare flight instead of waiting and the fare difference is Rs 2000.">
+                                <div class="s-tag">Scenario 3</div>
+                                <div class="s-name">Meher Kaur · Platinum</div>
+                                <div class="s-desc">6h Delay · Full night hotel + ₹2000 upgrade</div>
+                            </button>
+                        </div>
+
+                        <div class="quick-actions">
+                            <button class="quick-action" data-prompt="My flight was cancelled, reference SK4821X">
+                                <span>🚨</span> Flight Cancelled
+                            </button>
+                            <button class="quick-action" data-prompt="My flight is delayed, booking TR1190B">
+                                <span>⏰</span> Flight Delayed
+                            </button>
+                            <button class="quick-action" data-prompt="I need a refund for WL7742">
+                                <span>💳</span> Request Refund
+                            </button>
+                            <button class="quick-action" data-prompt="What compensation do I get?">
+                                <span>💰</span> Compensation Info
+                            </button>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="userInput" 
+                                placeholder="Type your booking ref or issue here..." 
+                                autocomplete="off"
+                            >
+                            <button id="sendBtn" class="btn-send">
+                                <span>Send</span>
+                                <span class="send-icon">→</span>
+                            </button>
+                        </div>
+                        <p class="input-hint">Press Enter or click Send. Data is only for this session.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings View -->
+            <div class="view" id="bookings-view">
+                <div class="view-header">
+                    <h1>Your Bookings</h1>
+                </div>
+                <div class="bookings-container">
+                    <div class="info-card">
+                        <p>Enter your booking reference in the chat to view flight details and status.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div class="view" id="history-view">
+                <div class="view-header">
+                    <h1>Ticket History</h1>
+                </div>
+                <div class="history-container">
+                    <div class="info-card">
+                        <p>Your support tickets will appear here after you start a conversation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ View -->
+            <div class="view" id="faq-view">
+                <div class="view-header">
+                    <h1>Frequently Asked Questions</h1>
+                </div>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <h3>What compensation do I get for flight delays?</h3>
+                        <p>
+                            <strong>Under 3 hours:</strong> ₹500 meal voucher<br>
+                            <strong>3-5 hours:</strong> Meal voucher + lounge access<br>
+                            <strong>Over 5 hours:</strong> Meal voucher + hotel (delayed hours only)
+                        </p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Can I get a refund for a cancelled flight?</h3>
+                        <p>Yes! For airline-caused cancellations, you can choose between a free rebooking on the next available flight or a full refund within 7 business days.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Do loyalty tiers get extra benefits?</h3>
+                        <p>Gold and Platinum members get priority rebooking on available seats, but compensation follows the standard policy.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>When do I need to talk to a human agent?</h3>
+                        <p>For compensation beyond policy, legal threats, or special cases where I can't fully help, I'll escalate you to our specialist team immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Human Handoff Modal -->
+    <div class="handoff-overlay" id="handoffOverlay">
+        <div class="handoff-modal">
+            <div class="handoff-icon">👨‍💼</div>
+            <h2>Connecting to Human Agent</h2>
+            <p id="handoffReason">This conversation requires specialist attention.</p>
+            <div class="handoff-progress">
+                <div class="handoff-bar"></div>
+            </div>
+            <div class="handoff-agent-card" id="handoffAgentCard">
+                <div class="agent-avatar-human">RS</div>
+                <div class="agent-info">
+                    <strong>Rahul Sharma</strong>
+                    <span>Senior Support Specialist · Available</span>
+                </div>
+                <div class="agent-status-dot"></div>
+            </div>
+            <p class="handoff-note" id="handoffNote">Transferring conversation history...</p>
+            <div class="handoff-actions" id="handoffActions" style="display:none;">
+                <button class="btn-handoff-confirm" id="handoffConfirm">✅ Connect Now</button>
+                <button class="btn-handoff-cancel" id="handoffCancel">Continue with AI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Escalation Banner (in-chat) -->
+    <div class="escalation-banner" id="escalationBanner" style="display:none;">
+        <div class="escalation-content">
+            <span class="escalation-icon">⚠️</span>
+            <div>
+                <strong>This needs human attention</strong>
+                <p id="escalationBannerText">Our specialist team can better help with this request.</p>
+            </div>
+        </div>
+        <button class="btn-transfer" id="btnTransfer">Transfer to Human →</button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="loader"></div>
+        <p>SkyAssist is thinking...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
