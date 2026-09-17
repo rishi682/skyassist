@@ -1,49 +1,213 @@
-# Airline Disruption Resolution Agent
+# ✈️ SkyAssist — AI-Powered Airline Disruption Agent
 
-An AI-powered customer support agent for handling airline flight disruptions (cancellations and delays).
+> **AIONOS Agentic AI Factory · Assignment 3 — Customer-Facing Resolution Agent**
 
-## Project Structure
+An intelligent, policy-compliant airline customer support agent that handles flight cancellations and delays in real time — and knows exactly when to hand off to a human.
+
+---
+
+## 📸 Screenshots
+
+### Main Chat Interface
+![SkyAssist Main UI](docs/screenshots/ui-main.png)
+
+### Human Escalation Flow
+![SkyAssist Escalation](docs/screenshots/ui-escalation.png)
+
+---
+
+## 🎯 What It Does
+
+- Understands customer issues from natural language
+- Looks up real booking & flight data
+- Applies exact airline policies — no hallucination
+- Calculates correct compensation automatically
+- Detects angry customers, legal threats, and policy exceptions
+- Escalates to a human specialist when needed — with full conversation handoff
+
+---
+
+## 🧪 3 Live Demo Scenarios
+
+| # | Customer | Tier | Issue | Agent Action |
+|---|----------|------|-------|--------------|
+| 1 | Priya Nair | 🥇 Gold | Flight SK-204 **cancelled** · wants refund + business class upgrade | Offers rebooking OR refund · Denies upgrade (beyond policy) |
+| 2 | Arvind Kulkarni | 🥈 Silver | Flight SK-118 **delayed 4h** · wants hotel | Gives meal voucher + lounge · Denies hotel (needs 5h+) |
+| 3 | Meher Kaur | 💎 Platinum | Flight SK-305 **delayed 6h** · wants full night hotel + ₹2000 upgrade | Gives meal + lounge + 6h hotel · **Escalates** fare diff > ₹1500 |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python + FastAPI |
+| AI Models | Groq API (`groq/compound-mini` + `openai/gpt-oss-120b`) |
+| Fallback Model | `openai/gpt-oss-20b` |
+| Frontend | Vanilla JS + HTML/CSS (Gen-Z dark UI) |
+| Data | JSON (customers, bookings, policies) |
+| Deployment | Local / Docker-ready |
+
+---
+
+## 🧠 AI Models Used
 
 ```
-airline-agent/
+GROQ_FAST_MODEL  = "groq/compound-mini"     → sentiment, booking ref extraction
+GROQ_SMART_MODEL = "openai/gpt-oss-120b"    → reasoning, response generation
+GROQ_FALLBACK    = "openai/gpt-oss-20b"     → fallback on errors
+```
+
+---
+
+## 📐 Architecture
+
+```
+Customer Message (Frontend)
+        ↓
+   FastAPI Server
+        ↓
+┌───────────────────────────────────┐
+│         Agent Orchestrator        │
+│  1. Extract booking reference     │
+│  2. Detect sentiment & urgency    │
+│  3. Lookup customer + flight      │
+│  4. Apply policy rules            │
+│  5. Check escalation triggers     │
+│  6. Generate LLM response         │
+│  7. Log to audit trail            │
+└───────────────────────────────────┘
+        ↓
+  Response + Escalation Flag
+        ↓
+ Frontend (chat / human handoff)
+```
+
+---
+
+## ⚡ Quick Start
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/YOUR_USERNAME/skyassist-airline-agent.git
+cd skyassist-airline-agent
+```
+
+### 2. Add your Groq API key
+```bash
+cp .env.example .env
+# Edit .env and add your GROQ_API_KEY
+```
+
+### 3. Install dependencies
+```bash
+pip install -r backend/requirements.txt
+```
+
+### 4. Run the backend
+```bash
+python backend/main.py
+```
+Backend starts at: `http://localhost:8000`
+
+### 5. Open the frontend
+Open `frontend/index.html` in your browser — or serve it:
+```bash
+python -m http.server 8001 --directory frontend
+```
+Then visit: `http://localhost:8001`
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Health check |
+| GET | `/health` | Detailed status |
+| POST | `/chat` | Main chat endpoint |
+| GET | `/scenarios` | List test scenarios |
+| GET | `/audit-log` | View interaction log |
+| POST | `/reset` | Reset conversation |
+| GET | `/docs` | Swagger UI |
+
+### Example Chat Request
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "My flight SK4821X was cancelled, I want a refund",
+    "conversation_history": []
+  }'
+```
+
+---
+
+## 📋 Policy Rules Enforced
+
+| Situation | Compensation |
+|-----------|-------------|
+| Delay < 3h | ₹500 meal voucher |
+| Delay 3–5h | Meal voucher + lounge access |
+| Delay > 5h | Meal + lounge + hotel (delayed hours only) |
+| Flight cancelled | Free rebooking OR full refund |
+| Fare diff > ₹1,500 | Requires supervisor approval → escalate |
+| Legal threat | Immediate escalation |
+
+---
+
+## 👨‍💼 Human Handoff Feature
+
+When the conversation gets serious, the agent:
+1. Shows a **red warning banner** at the bottom of chat
+2. Displays a **"Transfer to Human →"** button
+3. On click — animated modal shows a specialist is found
+4. Customer confirms → chat locks, full history transferred
+5. Human specialist contacts customer within 5 minutes
+
+---
+
+## 📁 Project Structure
+
+```
+skyassist-airline-agent/
 ├── backend/
-│   ├── main.py                 # FastAPI app entry point
-│   ├── requirements.txt         # Python dependencies
-│   ├── config.py               # Configuration
-│   ├── models/
-│   │   ├── customer.py         # Customer data models
-│   │   ├── booking.py          # Booking/flight data models
-│   │   └── agent_state.py      # Agent conversation state
-│   ├── data/
-│   │   ├── customers.json      # Customer profiles
-│   │   ├── bookings.json       # Booking/flight data
-│   │   └── policies.json       # Service rules and policies
-│   ├── services/
-│   │   ├── agent.py            # Main agent logic
-│   │   ├── policy_engine.py    # Policy compliance and decisions
-│   │   ├── groq_service.py     # Groq LLM integration
-│   │   └── audit_logger.py     # Audit trail logging
-│   └── api/
-│       ├── routes.py           # API endpoints
-│       └── schemas.py          # Request/response schemas
+│   ├── main.py            # FastAPI server
+│   ├── agent.py           # Agent orchestration logic
+│   ├── groq_service.py    # Groq LLM integration
+│   ├── policy_engine.py   # Airline rules engine
+│   ├── models.py          # Pydantic data models
+│   ├── data.py            # Customer, booking, policy data
+│   ├── config.py          # Configuration
+│   └── requirements.txt
 ├── frontend/
-│   ├── index.html              # Chat interface
-│   ├── style.css               # Styling
-│   └── script.js               # Frontend logic
-└── .env.example                # Example environment variables
+│   ├── index.html         # Chat UI
+│   ├── style.css          # Gen-Z dark theme
+│   └── script.js          # Frontend logic + handoff
+├── docs/
+│   └── screenshots/
+├── simple_test.py         # Quick test script
+├── .env.example           # API key template
+└── README.md
 ```
 
-## Tech Stack
-- **Backend:** Python + FastAPI
-- **AI/LLM:** Groq API (fast inference)
-- **Frontend:** Vanilla JS + HTML/CSS
-- **Data:** JSON files
+---
 
-## Setup
+## ✅ Assignment Checklist
 
-1. Clone repo and navigate to project
-2. Create `.env` file with your Groq API key
-3. Install dependencies: `pip install -r backend/requirements.txt`
-4. Run backend: `python backend/main.py`
-5. Open frontend in browser
+- [x] Working agent — handles all 3 scenarios
+- [x] Architecture and process flow documented
+- [x] Source data only — no invented policies
+- [x] AI tools used — Groq (compound-mini + gpt-oss-120b)
+- [x] Human escalation with handoff UI
+- [x] Audit trail of all interactions
+- [x] GitHub repo with one-command local run
+- [x] Gen-Z dark UI with scenario buttons
+- [x] FastAPI with Swagger docs at `/docs`
 
+---
+
+## 👤 Built By
+
+Bennett University · AIONOS Internship Assignment
+Agentic AI Factory · Assignment 3 — Customer-Facing Resolution Agent
